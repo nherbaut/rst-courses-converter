@@ -29,5 +29,5 @@ elif outfile[-3:] == ".md":
 else:
     print("unsupported file output format:" + outfile)
     exit(-1)
-logging.warning(infile)
+logging.debug(infile)
 mdwriter.parse_and_dump(outfile)

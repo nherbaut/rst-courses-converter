@@ -40,5 +40,4 @@ class IPyNB(MDWriter):
         self.nb['cells'].append(cell)
 
     def dump(self, filename):
-        print("writing in %s" % filename)
         nbf.write(self.nb, filename)
