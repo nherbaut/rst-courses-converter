@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+import os
+from rst_courses_converter import md, ipynb
+import argparse
+import logging
+
+# urlencore as a python function since lxml only support XSLT 1.0
+
+
+# cli parsing
+parser = argparse.ArgumentParser(description='Convert Sphnix-Generated XML to ipynb')
+parser.add_argument('input', metavar='INPUT_FILE', type=str, help='which file to read')
+parser.add_argument('output', metavar='OUTPUT_FILE', nargs="?", type=str,
+                    help='where to write the output. Defaults to the input file''s  path with a ipynb extension',
+                    default=None)
+
+args = parser.parse_args()
+outfile = args.output
+infile = os.path.expandvars(os.path.expanduser(args.input))
+
+if outfile is None:
+    outfile = os.path.join(os.path.split(infile)[0], os.path.splitext((os.path.split(infile)[-1]))[0] + ".ipynb")
+
+# choose converter depending on the provided output file
+if outfile[-6:] == ".ipynb":
+    mdwriter = ipynb.IPyNB(infile)
+elif outfile[-3:] == ".md":
+    mdwriter = md.MDWriter(infile)
+else:
+    print("unsupported file output format:" + outfile)
+    exit(-1)
+logging.warning(infile)
+mdwriter.parse_and_dump(outfile)
