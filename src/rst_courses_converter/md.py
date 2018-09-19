@@ -50,6 +50,7 @@ class MDWriter:
 
         code_transformers = {}
         code_transformers["table"] = self.handle_table
+        code_transformers["compound"] = self.handle_compound
 
         skipping = NO_SKIPPING
 
@@ -140,6 +141,23 @@ class MDWriter:
         output = '''```%s\n\n%s\n```\n\n''' % (language, ''.join(code))
         return output
 
+    def handle_compound(self, elem):
+        output = ""
+        tree = ET.XML(ET.tostring(elem))
+        title = tree.xpath("//compound/compact_paragraph/caption/text()")
+        if (len(title) > 0):
+            title = title[0]
+        if len(title)>0:
+            output += "**%s**\n\n" % title
+
+        for item in tree.xpath("//compound/compact_paragraph/bullet_list/list_item"):
+            ref = item.xpath("./compact_paragraph/reference")[0]
+            output += "* [%s](%s.%s)  \n" % (ref.xpath("./text()")[0], ref.xpath("./@refuri")[0],self.get_file_extension())
+
+        return output
+
+    def get_file_extension(self):
+        return "md"
     def handle_table(self, elem):
         output = ""
 

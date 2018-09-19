@@ -20,6 +20,9 @@ class IPyNB(MDWriter):
                 "pygments_lexer": "java",
                 "version": "10.0.2+13"}}
 
+    def get_file_extension(self):
+        return "ipynb"
+
     def handle_literal_block(self, elem):
         '''
         apply specify treatment for code element
@@ -39,5 +42,6 @@ class IPyNB(MDWriter):
         cell = nbf.v4.new_markdown_cell(segment)
         self.nb['cells'].append(cell)
 
+
     def dump(self, filename):
-        nbf.write(self.nb, filename)
+         nbf.write(self.nb, filename)
