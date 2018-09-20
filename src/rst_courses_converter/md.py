@@ -163,10 +163,12 @@ class MDWriter:
 
         tree = ET.XML(ET.tostring(elem))
         title = tree.xpath("/table/title/text()")
-        if (len(title) > 0):
+        if (len(title) >= 1):
             title = title[0]
+            output += "**%s**\n\n" % title
 
-        output += "**%s**\n\n" % title
+
+
         # we don't support formatting within a table, so each entry's text is taken, concat and stipped
 
         headers = ["".join(entry.xpath(".//text()")).strip() for entry in tree.xpath("/table/tgroup/thead/row/entry")]
@@ -174,7 +176,7 @@ class MDWriter:
         output += "|%s|\n" % "|".join(["---"] * len(headers))
         # now do the same thing with rows
         for row in tree.xpath("/table/tgroup/tbody/row"):
-            row_entries_text = ["".join(entry.xpath(".//text()")).strip() for entry in
+            row_entries_text = ["".join(entry.xpath(".//text()")).strip().replace("\n","\\") for entry in
                                 row.xpath("./entry")]
             output += "|%s|\n" % "|".join(row_entries_text)
         return output
