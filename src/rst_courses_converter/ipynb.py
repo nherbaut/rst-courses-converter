@@ -31,17 +31,22 @@ class IPyNB(MDWriter):
         '''
 
         code = elem.xpath('./text()')
+        language = elem.attrib.get("language", "text")
         output = '%s' % (''.join(code))
-        return output
+        return (output, language)
 
     def add_segment_code(self, segment):
-        cell = nbf.v4.new_code_cell(segment)
+        code, language = segment
+
+        if language == "java":
+            cell = nbf.v4.new_code_cell(code)
+        else:
+            cell = nbf.v4.new_raw_cell(code)
         self.nb['cells'].append(cell)
 
     def add_segment_text(self, segment):
         cell = nbf.v4.new_markdown_cell(segment)
         self.nb['cells'].append(cell)
 
-
     def dump(self, filename):
-         nbf.write(self.nb, filename)
+        nbf.write(self.nb, filename)
