@@ -13,10 +13,19 @@ parser.add_argument('input', metavar='INPUT_FILE', type=str, help='which file to
 parser.add_argument('output', metavar='OUTPUT_FILE', nargs="?", type=str,
                     help='where to write the output. Defaults to the input file''s  path with a ipynb extension',
                     default=None)
+parser.add_argument('--log', type=str,
+                    help='python loglevel',
+                    default="INFO")
 
 args = parser.parse_args()
 outfile = args.output
 infile = os.path.expandvars(os.path.expanduser(args.input))
+
+loglevel = args.log
+numeric_level = getattr(logging, loglevel.upper(), None)
+if not isinstance(numeric_level, int):
+    raise ValueError('Invalid log level: %s' % loglevel)
+logging.basicConfig(level=numeric_level, )
 
 if outfile is None:
     outfile = os.path.join(os.path.split(infile)[0], os.path.splitext((os.path.split(infile)[-1]))[0] + ".ipynb")
